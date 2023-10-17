@@ -2,6 +2,7 @@
 import pygame
 from pygame import draw, Surface
 from implementation_one import *
+from pygame.locals import *
 
 qt_line = 30
 size = 20
@@ -12,7 +13,10 @@ clock = pygame.time.Clock()
 running = True
 left_button_clicked = False
 
-grid = create_grid(10)
+grid_size = 25
+grid = create_grid(grid_size)
+start = False
+
 
 def draw_grid(screen: Surface):
     center_x = screen.get_width() / 2
@@ -24,9 +28,9 @@ def draw_grid(screen: Surface):
         for y in range(len(grid)):
             pos_y = y * size + start_y
             if grid[x][y] == 0:
-                draw.rect(screen, "white", (pos_x, pos_y, size, size), 1)
-            if grid[x][y] == 1:
                 draw.rect(screen, "white", (pos_x, pos_y, size, size), 10)
+            if grid[x][y] == 1:
+                draw.rect(screen, "white", (pos_x, pos_y, size, size), 1)
 
 
 # def draw_grid():
@@ -42,6 +46,18 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        elif event.type == MOUSEWHEEL:
+            if event.y > 0:
+                grid_size+=10
+            elif event.y<0:
+                grid_size-=10
+            grid = create_grid(grid_size)
+
+        elif event.type == KEYDOWN:
+            print("keydown")
+            if event.key == K_RETURN:
+                start = not start
+
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
     draw_grid(screen)
@@ -51,7 +67,7 @@ while running:
 
     # Check for left, middle, and right mouse button clicks
     if mouse_buttons[0] and not left_button_clicked:
-        grid = create_grid(10)
+        grid = create_grid(grid_size)
         left_button_clicked = True
 
         # Reset the flag when the button is released
@@ -59,10 +75,10 @@ while running:
         left_button_clicked = False
 
     # RENDER YOUR GAME HERE
-
     # flip() the display to put your work on screen
     pygame.display.flip()
-
-    clock.tick(60)  # limits FPS to 60
+    if start:
+        grid = run_generation(grid)
+    clock.tick(10)  # limits FPS to 60
 
 pygame.quit()
