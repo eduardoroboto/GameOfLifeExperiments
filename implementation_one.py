@@ -1,6 +1,11 @@
 import random
 
 
+def randomize_matrix(matrix):
+    for row in matrix:
+        for i in range(len(row)):
+            row[i] = random.choice([0, 1])
+    return matrix
 
 def create_grid(size: int) -> list:
     f = int(size / 2)
@@ -8,6 +13,65 @@ def create_grid(size: int) -> list:
 
     return [[random.choices([0, 1], weights=weights)[0] for _ in range(size)] for _ in range(size)]
 
+def create_matrix(x:int, y:int, value=0) -> list:
+    return [[value for _ in range(y)] for _ in range(x)]
+
+
+def resize_matrix(matrix, new_x, new_y):
+    if new_x > len(matrix):
+        for _ in range(new_x - len(matrix)):
+            matrix.append([random.choice([0, 1]) for _ in range(len(matrix[0]))])
+    else:
+        matrix = matrix[:new_x]
+
+    for row in matrix:
+        if new_y > len(row):
+            row.extend([random.choice([0, 1]) for _ in range(new_y - len(row))])
+        else:
+            row = row[:new_y]
+
+    return matrix
+
+def add_row(matrix):
+    if len(matrix) == 0:
+        return [[random.choice([0, 1])]]
+    new_row_one = [random.choice([0, 1]) for _ in range(len(matrix[0]))]
+    new_row_two = [random.choice([0, 1]) for _ in range(len(matrix[0]))]
+    matrix.append(new_row_one)
+    matrix.insert(0,new_row_two)
+    return matrix
+
+def add_column(matrix):
+    if len(matrix) == 0:
+        return [[random.choice([0, 1])]]
+    for row in matrix:
+        row.append(random.choice([0, 1]))
+        row.insert(0,random.choice([0, 1]))
+    return matrix
+
+def remove_row(matrix):
+    if len(matrix) == 0:
+        return matrix
+    matrix.pop()
+    matrix.pop(0)
+    return matrix
+
+def remove_column(matrix):
+    if len(matrix) == 0:
+        return matrix
+    for row in matrix:
+        if len(row) > 0:
+            row.pop()
+            row.pop(0)
+    return matrix
+
+def bigger_matrix(matrix):
+    add_row(matrix)
+    add_column(matrix)
+
+def smalled_matrix(matrix):
+    remove_column(matrix)
+    remove_row(matrix)
 
 # def create_grid(size: int) -> list:
 #     grid = [[0 for _ in range(size)] for _ in range(size)]  # Initialize the grid with all 0s
@@ -25,9 +89,10 @@ def create_grid(size: int) -> list:
 #     return grid
 
 
-def create_clean_grid(size: int) -> list:
-    f = int(size/2)
-    return [[0] * size for _ in range(size)]
+# def create_clean_grid(size: int) -> list:
+#     f = int(size/2)
+#     return [[0] * size for _ in range(size)]
+#
 
 def add_rows(size:int, grid:list):
     grid.append([0]*size)
@@ -78,7 +143,9 @@ def live_or_die(grid:list,x:int,y:int) -> bool:
 
 
 def run_generation(grid:list):
-    next_gen = create_clean_grid(len(grid))
+    rows = len(grid)
+    cols = len(grid[0])
+    next_gen = create_matrix(rows, cols,0)
     for x in range(len(grid)):
         for y in range(len(grid[0])):
             if live_or_die(grid,x,y):

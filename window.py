@@ -22,13 +22,13 @@ def draw_grid(screen: Surface):
     center_x = screen.get_width() / 2
     center_y = screen.get_height() / 2
     start_x = (center_x - (len(grid) * size) / 2)
-    start_y = (center_y - (len(grid) * size) / 2)
+    start_y = (center_y - (len(grid[0]) * size) / 2)
     for x in range(len(grid)):
         pos_x = x * size + start_x
-        for y in range(len(grid)):
+        for y in range(len(grid[x])):
             pos_y = y * size + start_y
             if grid[x][y] == 0:
-                draw.rect(screen, "white", (pos_x, pos_y, size, size), 10)
+                draw.rect(screen, "white", (pos_x, pos_y, size, size))
             if grid[x][y] == 1:
                 draw.rect(screen, "white", (pos_x, pos_y, size, size), 1)
 
@@ -46,17 +46,45 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        # elif event.type == MOUSEWHEEL:
+        #     if event.y > 0:
+        #         grid_size+=10
+        #     elif event.y<0:
+        #         grid_size-=10
+        #     grid = create_grid(grid_size)
+
         elif event.type == MOUSEWHEEL:
             if event.y > 0:
-                grid_size+=10
+                size+=5
             elif event.y<0:
-                grid_size-=10
-            grid = create_grid(grid_size)
+                size-=5
 
-        elif event.type == KEYDOWN:
-            print("keydown")
-            if event.key == K_RETURN:
-                start = not start
+        # elif event.type == KEYDOWN:
+        #     print("keydown")
+        #     if event.key == K_SPACE:
+        #         start = not start
+        #     elif event.key == K_UP:
+        #         add_row(grid)
+        #     elif event.key == K_DOWN:
+        #         remove_row(grid)
+        #     elif event.key == K_LEFT:
+        #         add_column(grid)
+        #     elif  event.key == K_RIGHT:
+        #         remove_column(grid)
+
+    keys = pygame.key.get_pressed()
+    if keys[K_SPACE]:
+        start = not start
+    if keys[K_UP]:
+        add_column(grid)
+    elif keys[K_DOWN]:
+        remove_column(grid)
+    if keys[K_LEFT]:
+        add_row(grid)
+    elif keys[K_RIGHT]:
+        remove_row(grid)
+
+
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
@@ -67,7 +95,7 @@ while running:
 
     # Check for left, middle, and right mouse button clicks
     if mouse_buttons[0] and not left_button_clicked:
-        grid = create_grid(grid_size)
+        randomize_matrix(grid)
         left_button_clicked = True
 
         # Reset the flag when the button is released
@@ -79,6 +107,6 @@ while running:
     pygame.display.flip()
     if start:
         grid = run_generation(grid)
-    clock.tick(10)  # limits FPS to 60
+    clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
