@@ -4,10 +4,6 @@ from typing import Callable
 from pygame import Surface
 
 
-# This is a implementation of Game of Life
-# using a list of lists to represent a Matrix
-
-
 def randomize_matrix(matrix):
     for row in matrix:
         for i in range(len(row)):
